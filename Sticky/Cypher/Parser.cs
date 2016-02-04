@@ -18,7 +18,7 @@ namespace Sticky.Cypher
 
         static readonly Parser<string> QuotedText =
             from openQuote in Parse.Char('\'')
-            from text in Parse.AnyChar
+            from text in Parse.LetterOrDigit.XOr(Parse.WhiteSpace).Many()
             from closeQuote in Parse.Char('\'')
             select string.Concat(openQuote, text, closeQuote);
 
@@ -28,7 +28,7 @@ namespace Sticky.Cypher
         static readonly Parser<Property> Property =
             from leading in Parse.WhiteSpace.Many()
             from name in Identifier
-            from sperator in Parse.Char(':')
+            from separator in Parse.Char(':')
             from textValue in Parse.Or(QuotedText, Number)
             select new Property { Name = name, TextValue = textValue };
 
@@ -76,6 +76,7 @@ namespace Sticky.Cypher
 
         public static void Boop(string source)
         {
+            //var jane = Node.Parse("(a:b {c:'d', e:'f1'})");
             var bob = Command.Parse(source);
         }
     }

@@ -50,7 +50,7 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (stratford)-[:COUNTRY]->(england),
  (rsc)-[:BASED_IN]->(stratford),
  (shakespeare)-[:BORN_IN]->(stratford)";
-            source = @"STUFF (a:d {e:f})-[:b]->(c)";
+           // source = @"STUFF (a:d)-[:b]->(c)";
             Parser.Boop(source);
         }
     }
