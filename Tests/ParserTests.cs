@@ -10,7 +10,6 @@ namespace Tests
         [TestMethod]
         public void CanParseShakepeare()
         {
-            var parser = new Parser();
 
             var source = @"
 CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
@@ -50,9 +49,9 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (stratford:City {name:'Stratford upon Avon'}),
  (stratford)-[:COUNTRY]->(england),
  (rsc)-[:BASED_IN]->(stratford),
- (shakespeare)-[:BORN_IN]->stratford";
-
-            parser.Parse(source);
+ (shakespeare)-[:BORN_IN]->(stratford)";
+            source = @"STUFF (a:d {e:f})-[:b]->(c)";
+            Parser.Boop(source);
         }
     }
 }
