@@ -45,10 +45,12 @@ namespace Sticky.Cypher
             from label in Parse.Optional(Label)
             from properties in Parse.Optional(Properties)
             from endNodeChar in Parse.Char(')')
-            select new Node {
+            select new Node
+            {
                 Identifier = identifier,
                 Label = label.IsDefined ? label.Get() : "",
-                Properties = properties.IsDefined ? properties.Get() : new List<Property>() };
+                Properties = properties.IsDefined ? properties.Get() : new List<Property>()
+            };
 
         static readonly Parser<Relationship> Relationship =
             from left in Parse.Optional(Parse.Char('<'))
@@ -64,9 +66,15 @@ namespace Sticky.Cypher
         static readonly Parser<Path> Path =
             from leading in Parse.WhiteSpace.Many()
             from leftNode in Node
+            from connection in Parse.Optional(
             from relationship in Relationship
             from rightNode in Node
-            select new Path { Node = leftNode };
+            select new { relationship = relationship, node = rightNode})
+            select new Path {
+                LeftNode = leftNode,
+                Relationship = connection.IsDefined ? connection.Get().relationship : null,
+                RightNode = connection.IsDefined ? connection.Get().node : null
+            };
 
         static readonly Parser<Command> Command =
             from leading in Parse.WhiteSpace.Many()
