@@ -11,8 +11,10 @@ namespace Sticky.Cypher
             from rest in Parse.LetterOrDigit.XOr(Parse.Char('-')).XOr(Parse.Char('_')).Many()
             select new string(first.Concat(rest).ToArray());
 
+        static readonly Parser<char> LabelPrefix = Parse.Char(':');
+
         static readonly Parser<string> Label =
-            from colon in Parse.Char(':')
+            from labelPrefix in LabelPrefix
             from identifer in Identifier
             select identifer;
 
@@ -24,13 +26,14 @@ namespace Sticky.Cypher
             from closeQuote in Parse.Char('\'')
             select string.Concat(openQuote, new string(text.ToArray()), closeQuote);
 
-        static readonly Parser<string> Number =
-            Parse.Decimal;
+        static readonly Parser<string> Number = Parse.Decimal;
+
+        static readonly Parser<char> ValuePrefix = Parse.Char(':');
 
         static readonly Parser<Property> Property =
             from leading in Parse.WhiteSpace.Many()
             from name in Identifier
-            from separator in Parse.Char(':')
+            from valuePrefix in ValuePrefix
             from textValue in Parse.Or(QuotedText, Number)
             select new Property { Name = name, TextValue = textValue };
 
