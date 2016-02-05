@@ -97,6 +97,7 @@ namespace Sticky.Cypher
                 from leading in Parse.WhiteSpace.Many()
                 from text in identifierParser
                 from paths in pathParser.DelimitedBy(Parse.Char(','))
+                from terminator in Parse.Char(';').Optional()
                 select new Command { Text = text, Paths = paths };
 
             var command = commandParser.Parse(source);

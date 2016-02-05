@@ -7,7 +7,36 @@ namespace Tests
     [TestClass]
     public class ParserTests
     {
-
+        [TestMethod]
+        public void CanParseMultipleCommands()
+        {
+            var source = @"
+CREATE (email_1:Email {id:'1', content:'email contents'}),
+ (bob)-[:SENT]->(email_1),
+ (email_1)-[:TO]->(charlie),
+ (email_1)-[:CC]->(davina),
+ (email_1)-[:CC]->(alice),
+ (email_1)-[:BCC]->(edward);
+CREATE (email_2:Email {id:'2', content:'email contents'}),
+ (bob)-[:SENT]->(email_2),
+ (email_2)-[:TO]->(davina),
+ (email_2)-[:BCC]->(edward);
+CREATE (email_3:Email {id:'3', content:'email contents'}),
+ (davina)-[:SENT]->(email_3),
+ (email_3)-[:TO]->(bob),
+ (email_3)-[:CC]->(edward);
+CREATE (email_4:Email {id:'4', content:'email contents'}),
+ (charlie)-[:SENT]->(email_4),
+ (email_4)-[:TO]->(bob),
+ (email_4)-[:TO]->(davina),
+ (email_4)-[:TO]->(edward);
+CREATE (email_5:Email {id:'5', content:'email contents'}),
+ (davina)-[:SENT]->(email_5),
+ (email_5)-[:TO]->(alice),
+ (email_5)-[:BCC]->(bob),
+ (email_5)-[:BCC]->(edward);
+";
+        }
 
         [TestMethod]
         public void CanParseShakepeare()
@@ -51,7 +80,7 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (stratford:City {name:'Stratford upon Avon'}),
  (stratford)-[:COUNTRY]->(england),
  (rsc)-[:BASED_IN]->(stratford),
- (shakespeare)-[:BORN_IN]->(stratford)
+ (shakespeare)-[:BORN_IN]->(stratford);
 ";
             var host = new Host();
             host.Execute(source);
