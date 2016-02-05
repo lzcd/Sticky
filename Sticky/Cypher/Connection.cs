@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sticky.Cypher
 {
-    class Path
+    class Connection
     {
         public Node Node { get; internal set; }
-        public Connection Connection { get; internal set; }
+        public Relationship Relationship { get; internal set; }
     }
 }

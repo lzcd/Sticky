@@ -49,7 +49,10 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (stratford:City {name:'Stratford upon Avon'}),
  (stratford)-[:COUNTRY]->(england),
  (rsc)-[:BASED_IN]->(stratford),
- (shakespeare)-[:BORN_IN]->(stratford)";
+ (shakespeare)-[:BORN_IN]->(stratford)
+";
+
+            source = @"CREATE (shakespeare)-[:WROTE_PLAY {year:1599}]->(juliusCaesar)";
             Parser.Boop(source);
         }
     }

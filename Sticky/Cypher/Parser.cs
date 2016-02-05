@@ -53,27 +53,31 @@ namespace Sticky.Cypher
             };
 
         static readonly Parser<Relationship> Relationship =
-            from left in Parse.Optional(Parse.Char('<'))
+            //from left in Parse.Char('<').Optional()
             from leftLine in Parse.Char('-')
             from openBracket in Parse.Char('[')
             from label in Label
+            from properties in Parse.Optional(Properties)
             from closeBracket in Parse.Char(']')
             from rightLine in Parse.Char('-')
-            from right in Parse.Optional(Parse.Char('>'))
-            select new Relationship { Label = label };
+            from right in Parse.Char('>') //.Optional()
+            select new Relationship {
+                Label = label,
+                Properties = properties.IsDefined ? properties.Get() : new List<Property>()
+            };
 
+        static readonly Parser<Connection> Connection =
+            from relationship in Relationship
+            from rightNode in Node
+            select new Connection { Relationship = relationship, Node = rightNode };
 
         static readonly Parser<Path> Path =
             from leading in Parse.WhiteSpace.Many()
             from leftNode in Node
-            from connection in Parse.Optional(
-            from relationship in Relationship
-            from rightNode in Node
-            select new { relationship = relationship, node = rightNode})
+            from connection in Connection
             select new Path {
-                LeftNode = leftNode,
-                Relationship = connection.IsDefined ? connection.Get().relationship : null,
-                RightNode = connection.IsDefined ? connection.Get().node : null
+                Node = leftNode,
+                Connection = connection
             };
 
         static readonly Parser<Command> Command =
@@ -84,7 +88,6 @@ namespace Sticky.Cypher
 
         public static void Boop(string source)
         {
-            //var jane = Node.Parse("(a:b {c:'d', e:'f1'})");
             var bob = Command.Parse(source);
         }
     }

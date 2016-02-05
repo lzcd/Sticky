@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cypher\Command.cs" />
+    <Compile Include="Cypher\Connection.cs" />
     <Compile Include="Cypher\Node.cs" />
     <Compile Include="Cypher\Parser.cs" />
     <Compile Include="Cypher\ParsingResult.cs" />
