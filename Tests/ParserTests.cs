@@ -7,6 +7,8 @@ namespace Tests
     [TestClass]
     public class ParserTests
     {
+
+
         [TestMethod]
         public void CanParseShakepeare()
         {
@@ -52,7 +54,11 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (shakespeare)-[:BORN_IN]->(stratford)
 ";
 
-            source = @"CREATE (shakespeare)-[:WROTE_PLAY {year:1599}]->(juliusCaesar)";
+            source = @"
+CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
+ (juliusCaesar:Play {title:'Julius Caesar'}),
+ (shakespeare)-[:WROTE_PLAY {year:1599}]->(juliusCaesar)";
+
             Parser.Boop(source);
         }
     }

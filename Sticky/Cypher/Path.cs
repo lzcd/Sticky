@@ -8,7 +8,7 @@ namespace Sticky.Cypher
 {
     class Path
     {
-        public Node Node { get; internal set; }
-        public Connection Connection { get; internal set; }
+        public Node Node { get; set; }
+        public Connection Connection { get; set; }
     }
 }

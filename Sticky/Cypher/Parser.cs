@@ -42,8 +42,8 @@ namespace Sticky.Cypher
         static readonly Parser<Node> Node =
             from startNodeChar in Parse.Char('(')
             from identifier in Identifier
-            from label in Parse.Optional(Label)
-            from properties in Parse.Optional(Properties)
+            from label in Label.Optional()
+            from properties in Properties.Optional()
             from endNodeChar in Parse.Char(')')
             select new Node
             {
@@ -53,17 +53,21 @@ namespace Sticky.Cypher
             };
 
         static readonly Parser<Relationship> Relationship =
-            //from left in Parse.Char('<').Optional()
+            from leftDirection in Parse.Char('<').Optional()
             from leftLine in Parse.Char('-')
             from openBracket in Parse.Char('[')
             from label in Label
-            from properties in Parse.Optional(Properties)
+            from properties in Properties.Optional()
             from closeBracket in Parse.Char(']')
             from rightLine in Parse.Char('-')
-            from right in Parse.Char('>') //.Optional()
-            select new Relationship {
+            from rightDirection in Parse.Char('>').Optional()
+            select new Relationship
+            {
                 Label = label,
-                Properties = properties.IsDefined ? properties.Get() : new List<Property>()
+                Properties = properties.IsDefined ? properties.Get() : new List<Property>(),
+                Direction = leftDirection.IsDefined ?
+                    RelationshipDirection.Left :
+                    (rightDirection.IsDefined ? RelationshipDirection.Right : RelationshipDirection.Unknown)
             };
 
         static readonly Parser<Connection> Connection =
@@ -74,10 +78,11 @@ namespace Sticky.Cypher
         static readonly Parser<Path> Path =
             from leading in Parse.WhiteSpace.Many()
             from leftNode in Node
-            from connection in Connection
-            select new Path {
+            from connection in Connection.Optional()
+            select new Path
+            {
                 Node = leftNode,
-                Connection = connection
+                Connection = connection.IsDefined ? connection.Get() : null
             };
 
         static readonly Parser<Command> Command =

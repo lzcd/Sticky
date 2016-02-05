@@ -8,7 +8,7 @@ namespace Sticky.Cypher
 {
     class Property
     {
-        public string Name { get; internal set; }
-        public string TextValue { get; internal set; }
+        public string Name { get; set; }
+        public string TextValue { get; set; }
     }
 }

@@ -9,8 +9,8 @@ namespace Sticky.Cypher
 {
     class Node
     {
-        public string Identifier { get; internal set; }
-        public string Label { get; internal set; }
-        public IEnumerable<Property> Properties { get; internal set; }
+        public string Identifier { get; set; }
+        public string Label { get; set; }
+        public IEnumerable<Property> Properties { get; set; }
     }
 }

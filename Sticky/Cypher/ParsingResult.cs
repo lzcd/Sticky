@@ -8,6 +8,6 @@ namespace Sticky.Cypher
 {
     public class ParsingResult
     {
-        public bool Success { get; internal set; }
+        public bool Success { get; set; }
     }
 }
