@@ -12,7 +12,7 @@ namespace Sticky
         public void Execute(string source)
         {
             var parser = new Cypher.Parser();
-            var command = parser.ToCommand(source);
+            var command = parser.ToAst(source);
         }
     }
 }

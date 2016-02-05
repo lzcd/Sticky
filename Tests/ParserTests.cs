@@ -11,30 +11,31 @@ namespace Tests
         public void CanParseMultipleCommands()
         {
             var source = @"
-CREATE (email_1:Email {id:'1', content:'email contents'}),
- (bob)-[:SENT]->(email_1),
- (email_1)-[:TO]->(charlie),
- (email_1)-[:CC]->(davina),
- (email_1)-[:CC]->(alice),
- (email_1)-[:BCC]->(edward);
-CREATE (email_2:Email {id:'2', content:'email contents'}),
- (bob)-[:SENT]->(email_2),
- (email_2)-[:TO]->(davina),
- (email_2)-[:BCC]->(edward);
-CREATE (email_3:Email {id:'3', content:'email contents'}),
- (davina)-[:SENT]->(email_3),
- (email_3)-[:TO]->(bob),
- (email_3)-[:CC]->(edward);
-CREATE (email_4:Email {id:'4', content:'email contents'}),
- (charlie)-[:SENT]->(email_4),
- (email_4)-[:TO]->(bob),
- (email_4)-[:TO]->(davina),
- (email_4)-[:TO]->(edward);
-CREATE (email_5:Email {id:'5', content:'email contents'}),
- (davina)-[:SENT]->(email_5),
- (email_5)-[:TO]->(alice),
- (email_5)-[:BCC]->(bob),
- (email_5)-[:BCC]->(edward);
+CREATE (email_6:Email {id:'6', content:'email'}),
+ (bob)-[:SENT]->(email_6),
+ (email_6)-[:TO]->(charlie),
+ (email_6)-[:TO]->(davina);
+CREATE (reply_1:Email:Reply {id:'7', content:'response'}),
+ (reply_1)-[:REPLY_TO]->(email_6),
+ (davina)-[:SENT]->(reply_1),
+ (reply_1)-[:TO]->(bob),
+ (reply_1)-[:TO]->(charlie);
+CREATE (reply_2:Email:Reply {id:'8', content:'response'}),
+ (reply_2)-[:REPLY_TO]->(email_6),
+ (bob)-[:SENT]->(reply_2),
+ (reply_2)-[:TO]->(davina),
+ (reply_2)-[:TO]->(charlie),
+ (reply_2)-[:CC]->(alice);
+CREATE (reply_3:Email:Reply {id:'9', content:'response'}),
+ (reply_3)-[:REPLY_TO]->(reply_1),
+ (charlie)-[:SENT]->(reply_3),
+ (reply_3)-[:TO]->(bob),
+ (reply_3)-[:TO]->(davina);
+CREATE (reply_4:Email:Reply {id:'10', content:'response'}),
+ (reply_4)-[:REPLY_TO]->(reply_3),
+ (bob)-[:SENT]->(reply_4),
+ (reply_4)-[:TO]->(charlie),
+ (reply_4)-[:TO]->(davina);
 ";
         }
 
