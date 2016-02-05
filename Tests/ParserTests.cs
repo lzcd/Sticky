@@ -53,7 +53,6 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (rsc)-[:BASED_IN]->(stratford),
  (shakespeare)-[:BORN_IN]->(stratford)
 ";
-            source = "CREATE  (billy:User {name:'Billy'})";
             Parser.Boop(source);
         }
     }

@@ -16,9 +16,11 @@ namespace Sticky.Cypher
             from identifer in Identifier
             select identifer;
 
+        static readonly Parser<char> SingleQuoteDelimiter = Parse.Char('\'');
+
         static readonly Parser<string> QuotedText =
-            from openQuote in Parse.Char('\'')
-            from text in Parse.LetterOrDigit.XOr(Parse.WhiteSpace).Many()
+            from openQuote in SingleQuoteDelimiter
+            from text in Parse.AnyChar.Except(SingleQuoteDelimiter).Many()
             from closeQuote in Parse.Char('\'')
             select string.Concat(openQuote, new string(text.ToArray()), closeQuote);
 
@@ -93,7 +95,8 @@ namespace Sticky.Cypher
 
         public static void Boop(string source)
         {
-            var bob = Command.Parse(source);
+            var command = Command.Parse(source);
+            
         }
     }
 }
