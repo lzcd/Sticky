@@ -53,12 +53,7 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (rsc)-[:BASED_IN]->(stratford),
  (shakespeare)-[:BORN_IN]->(stratford)
 ";
-
-            source = @"
-CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
- (juliusCaesar:Play {title:'Julius Caesar'}),
- (shakespeare)-[:WROTE_PLAY {year:1599}]->(juliusCaesar)";
-
+            source = "CREATE  (billy:User {name:'Billy'})";
             Parser.Boop(source);
         }
     }

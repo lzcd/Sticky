@@ -20,7 +20,7 @@ namespace Sticky.Cypher
             from openQuote in Parse.Char('\'')
             from text in Parse.LetterOrDigit.XOr(Parse.WhiteSpace).Many()
             from closeQuote in Parse.Char('\'')
-            select string.Concat(openQuote, text, closeQuote);
+            select string.Concat(openQuote, new string(text.ToArray()), closeQuote);
 
         static readonly Parser<string> Number =
             Parse.Decimal;
