@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sticky.Cypher;
+using Sticky;
 
 namespace Tests
 {
@@ -53,7 +53,8 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (rsc)-[:BASED_IN]->(stratford),
  (shakespeare)-[:BORN_IN]->(stratford)
 ";
-            Parser.Boop(source);
+            var host = new Host();
+            host.Execute(source);
         }
     }
 }

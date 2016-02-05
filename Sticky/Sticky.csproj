@@ -52,6 +52,7 @@
     <Compile Include="Cypher\Path.cs" />
     <Compile Include="Cypher\Property.cs" />
     <Compile Include="Cypher\Relationship.cs" />
+    <Compile Include="Host.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

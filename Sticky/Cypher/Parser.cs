@@ -4,11 +4,9 @@ using System.Linq;
 
 namespace Sticky.Cypher
 {
-    public static class Parser
+    class Parser
     {
-
-
-        public static void Boop(string source)
+        public Command ToCommand(string source)
         {
 
             var identifierParser =
@@ -102,7 +100,7 @@ namespace Sticky.Cypher
                 select new Command { Text = text, Paths = paths };
 
             var command = commandParser.Parse(source);
-
+            return command;
         }
     }
 }
