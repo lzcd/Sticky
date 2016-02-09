@@ -44,16 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HasLabel.cs" />
+    <Compile Include="HasProperties.cs" />
+    <Compile Include="Relationship.cs" />
     <Compile Include="Cypher\Create.cs" />
-    <Compile Include="Cypher\Connection.cs" />
-    <Compile Include="Cypher\Node.cs" />
+    <Compile Include="Cypher\ConnectionDescription.cs" />
+    <Compile Include="Cypher\NodeDescription.cs" />
     <Compile Include="Cypher\Parser.cs" />
     <Compile Include="Cypher\ParsingResult.cs" />
-    <Compile Include="Cypher\Path.cs" />
-    <Compile Include="Cypher\Property.cs" />
-    <Compile Include="Cypher\Relationship.cs" />
+    <Compile Include="Cypher\PathDescription.cs" />
+    <Compile Include="Cypher\PropertyDescription.cs" />
+    <Compile Include="Cypher\RelationshipDescription.cs" />
+    <Compile Include="HasValue.cs" />
     <Compile Include="Host.cs" />
+    <Compile Include="Node.cs" />
+    <Compile Include="Number.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

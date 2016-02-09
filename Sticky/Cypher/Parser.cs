@@ -38,7 +38,7 @@ namespace Sticky.Cypher
                 from name in identifierParser
                 from valuePrefix in valuePrefixParser
                 from textValue in Parse.Or(quotedTextParser, numberParser)
-                select new Property { Name = name, TextValue = textValue };
+                select new PropertyDescription { Name = name, TextValue = textValue };
 
             var propertiesParser =
                 from leading in Parse.WhiteSpace.Many()
@@ -53,11 +53,11 @@ namespace Sticky.Cypher
                 from label in labelParser.Optional()
                 from properties in propertiesParser.Optional()
                 from endNodeChar in Parse.Char(')')
-                select new Node
+                select new NodeDescription
                 {
                     Identifier = identifier,
                     Label = label.IsDefined ? label.Get() : "",
-                    Properties = properties.IsDefined ? properties.Get() : new List<Property>()
+                    PropertyDescriptions = properties.IsDefined ? properties.Get() : new List<PropertyDescription>()
                 };
 
             var relationshipParser =
@@ -69,10 +69,10 @@ namespace Sticky.Cypher
                 from closeBracket in Parse.Char(']')
                 from rightLine in Parse.Char('-')
                 from rightDirection in Parse.Char('>').Optional()
-                select new Relationship
+                select new RelationshipDescription
                 {
                     Label = label,
-                    Properties = properties.IsDefined ? properties.Get() : new List<Property>(),
+                    PropertyDescriptions = properties.IsDefined ? properties.Get() : new List<PropertyDescription>(),
                     Direction = leftDirection.IsDefined ?
                         RelationshipDirection.Left :
                         (rightDirection.IsDefined ? RelationshipDirection.Right : RelationshipDirection.Unknown)
@@ -81,16 +81,16 @@ namespace Sticky.Cypher
             var connectionParser =
                 from relationship in relationshipParser
                 from rightNode in nodeParser
-                select new Connection { Relationship = relationship, Node = rightNode };
+                select new ConnectionDescription { RelationshipDescription = relationship, NodeDescription = rightNode };
 
             var pathParser =
                 from leading in Parse.WhiteSpace.Many()
                 from leftNode in nodeParser
                 from connection in connectionParser.Optional()
-                select new Path
+                select new PathDescription
                 {
-                    Node = leftNode,
-                    Connection = connection.IsDefined ? connection.Get() : null
+                    NodeDescription = leftNode,
+                    ConnectionDescription = connection.IsDefined ? connection.Get() : null
                 };
 
             var createCommand =

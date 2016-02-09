@@ -9,10 +9,13 @@ namespace Sticky
 {
     public class Host
     {
+        private List<Node> nodes = new List<Node>();
+
         public void Execute(string source)
         {
             var parser = new Cypher.Parser();
             var command = parser.ToAst(source);
+            command.Apply(nodes);
         }
     }
 }
