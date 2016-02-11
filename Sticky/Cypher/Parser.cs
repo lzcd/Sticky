@@ -6,7 +6,7 @@ namespace Sticky.Cypher
 {
     class Parser
     {
-        public Create ToAst(string source)
+        public Applier ToAst(string source)
         {
 
             var identifierParser =
@@ -93,15 +93,29 @@ namespace Sticky.Cypher
                     ConnectionDescription = connection.IsDefined ? connection.Get() : null
                 };
 
-            var createCommand =
+            var createCommandParser =
                 from leading in Parse.WhiteSpace.Many()
                 from text in Parse.String("CREATE")
                 from paths in pathParser.DelimitedBy(Parse.Char(','))
                 from terminator in Parse.Char(';').Optional()
-                select new Create { Paths = paths };
+                select (Applier)new Create { Paths = paths };
 
-            var create = createCommand.Parse(source);
-            return create;
+            var matchCommandParser =
+               from leading in Parse.WhiteSpace.Many()
+               from text in Parse.String("MATCH")
+               from anchorNodes in nodeParser.Many()
+               from path in pathParser.DelimitedBy(Parse.Char(','))
+               from terminator in Parse.Char(';').Optional()
+               select (Applier)new Match { AnchorNodes = anchorNodes, Path = path };
+
+            var commandParser =
+                from command in createCommandParser
+                                    .XOr(matchCommandParser)
+                select command;
+
+            var result = commandParser.Parse(source);
+
+            return result;
         }
     }
 }

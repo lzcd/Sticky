@@ -43,7 +43,7 @@ CREATE (reply_4:Email:Reply {id:'10', content:'response'}),
         public void CanParseShakepeare()
         {
 
-            var source = @"
+            var factSource = @"
 CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (juliusCaesar:Play {title:'Julius Caesar'}),
  (shakespeare)-[:WROTE_PLAY {year:1599}]->(juliusCaesar),
@@ -84,7 +84,17 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  (shakespeare)-[:BORN_IN]->(stratford);
 ";
             var host = new Host();
-            host.Execute(source);
+            host.Execute(factSource);
+
+            var querySource = @"MATCH (theater:Venue {name:'Theatre Royal'}),
+ (newcastle:City {name:'Newcastle'}),
+ (bard:Author {lastname:'Shakespeare'}),
+ (newcastle)<-[:STREET|CITY*1..2]-(theater)
+ <-[:VENUE]-()-[:PERFORMANCE_OF]->()
+ -[:PRODUCTION_OF]->(play)<-[:WROTE_PLAY]-(bard)
+RETURN DISTINCT play.title AS play
+";
+            host.Execute(querySource);
         }
     }
 }

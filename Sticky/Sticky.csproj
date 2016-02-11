@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cypher\Applier.cs" />
+    <Compile Include="Cypher\Match.cs" />
     <Compile Include="HasLabel.cs" />
     <Compile Include="HasProperties.cs" />
     <Compile Include="Relationship.cs" />

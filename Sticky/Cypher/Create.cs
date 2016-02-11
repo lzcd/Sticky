@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sticky.Cypher
 {
-    class Create
+    class Create : Applier
     {
         public IEnumerable<PathDescription> Paths;
 
