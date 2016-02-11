@@ -31,18 +31,43 @@ namespace Sticky.Cypher
                         continue;
                     }
 
+                    var unmatchedPropertyFound = false;
                     foreach (var propertyPairCriterion in anchorCriterion.NodeDescription.PropertyDescriptions)
                     {
+                        var name = propertyPairCriterion.Name;
+                      
+
                         var testValue = default(HasValue);
-                        if (!node.PropertyByName.TryGetValue(propertyPairCriterion.Name, out testValue))
+                        if (!node.PropertyByName.TryGetValue(name, out testValue))
                         {
                             continue;
                         }
 
-                        if (testValue != propertyPairCriterion)
+
+                        var value = default(HasValue);
+
+                        if (propertyPairCriterion.TextValue.StartsWith("'") &&
+                            propertyPairCriterion.TextValue.EndsWith("'"))
                         {
-                            continue;
+                            var textValue = propertyPairCriterion.TextValue.Substring(1, propertyPairCriterion.TextValue.Length - 2);
+                            value = new Text { Value = textValue };
                         }
+                        else
+                        {
+                            var numericValue = default(decimal);
+                            Decimal.TryParse(propertyPairCriterion.TextValue, out numericValue);
+                            value = new Number { Value = numericValue };
+                        }
+
+                        if (!testValue.Equals(value))
+                        {
+                            unmatchedPropertyFound = true;
+                            break;
+                        }
+                    }
+                    if (unmatchedPropertyFound)
+                    {
+                        continue;
                     }
 
                     var identifier = anchorCriterion.NodeDescription.Identifier;
