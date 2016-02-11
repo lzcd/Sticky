@@ -151,6 +151,7 @@ namespace Sticky.Cypher
                select new RelationshipMatchDescription
                {
                    Labels = labels,
+                   DepthRange = depthRange.IsDefined ? depthRange.Get() : null,
                    PropertyDescriptions = properties.IsDefined ? properties.Get() : new List<PropertyDescription>(),
                    Direction = leftDirection.IsDefined ?
                        RelationshipDirection.Left :
@@ -167,11 +168,11 @@ namespace Sticky.Cypher
             var pathMatchParser =
                 from leading in Parse.WhiteSpace.Many()
                 from leftNode in nodeMatchParser
-                from connection in connectionMatchParser.Optional()
+                from connections in connectionMatchParser.Many()
                 select new PathMatchDescription
                 {
                     NodeDescription = leftNode,
-                    ConnectionDescription = connection.IsDefined ? connection.Get() : null
+                    ConnectionDescriptions = connections
                 };
 
 

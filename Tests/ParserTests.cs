@@ -59,9 +59,7 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
             var querySource = @"MATCH (theater:Venue {name:'Theatre Royal'}),
  (newcastle:City {name:'Newcastle'}),
  (bard:Author {lastname:'Shakespeare'}),
- (newcastle)<-[:STREET|CITY*1..2]-(theater)
- <-[:VENUE]-()-[:PERFORMANCE_OF]->()
- -[:PRODUCTION_OF]->(play)<-[:WROTE_PLAY]-(bard)
+ (newcastle)<-[:STREET|CITY*1..2]-(theater)<-[:VENUE]-()-[:PERFORMANCE_OF]->()-[:PRODUCTION_OF]->(play)<-[:WROTE_PLAY]-(bard)
 RETURN DISTINCT play.title AS play
 ";
 
