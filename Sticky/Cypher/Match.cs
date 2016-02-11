@@ -15,17 +15,23 @@ namespace Sticky.Cypher
             var anchorCriteria = Paths.Take(Paths.Count() - 1);
             var path = Paths.Last();
 
+            var anchorMatchesByIdentifier = FindAnchorMatches(nodes, anchorCriteria);
+
+        }
+
+        private static Dictionary<string, List<Node>> FindAnchorMatches(List<Node> nodes, IEnumerable<PathMatchDescription> anchorCriteria)
+        {
             var anchorMatchesByIdentifier = new Dictionary<string, List<Node>>();
-            foreach(var anchorCriterion in anchorCriteria)
+            foreach (var anchorCriterion in anchorCriteria)
             {
-                foreach(var node in nodes)
+                foreach (var node in nodes)
                 {
                     if (node.Label != anchorCriterion.NodeDescription.Label)
                     {
                         continue;
                     }
 
-                    foreach(var propertyPairCriterion in anchorCriterion.NodeDescription.PropertyDescriptions)
+                    foreach (var propertyPairCriterion in anchorCriterion.NodeDescription.PropertyDescriptions)
                     {
                         var testValue = default(HasValue);
                         if (!node.PropertyByName.TryGetValue(propertyPairCriterion.Name, out testValue))
@@ -49,6 +55,8 @@ namespace Sticky.Cypher
                     anchorMatches.Add(node);
                 }
             }
+
+            return anchorMatchesByIdentifier;
         }
     }
 }
