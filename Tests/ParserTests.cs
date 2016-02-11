@@ -7,37 +7,7 @@ namespace Tests
     [TestClass]
     public class ParserTests
     {
-        [TestMethod]
-        public void CanParseMultipleCommands()
-        {
-            var source = @"
-CREATE (email_6:Email {id:'6', content:'email'}),
- (bob)-[:SENT]->(email_6),
- (email_6)-[:TO]->(charlie),
- (email_6)-[:TO]->(davina);
-CREATE (reply_1:Email:Reply {id:'7', content:'response'}),
- (reply_1)-[:REPLY_TO]->(email_6),
- (davina)-[:SENT]->(reply_1),
- (reply_1)-[:TO]->(bob),
- (reply_1)-[:TO]->(charlie);
-CREATE (reply_2:Email:Reply {id:'8', content:'response'}),
- (reply_2)-[:REPLY_TO]->(email_6),
- (bob)-[:SENT]->(reply_2),
- (reply_2)-[:TO]->(davina),
- (reply_2)-[:TO]->(charlie),
- (reply_2)-[:CC]->(alice);
-CREATE (reply_3:Email:Reply {id:'9', content:'response'}),
- (reply_3)-[:REPLY_TO]->(reply_1),
- (charlie)-[:SENT]->(reply_3),
- (reply_3)-[:TO]->(bob),
- (reply_3)-[:TO]->(davina);
-CREATE (reply_4:Email:Reply {id:'10', content:'response'}),
- (reply_4)-[:REPLY_TO]->(reply_3),
- (bob)-[:SENT]->(reply_4),
- (reply_4)-[:TO]->(charlie),
- (reply_4)-[:TO]->(davina);
-";
-        }
+        
 
         [TestMethod]
         public void CanParseShakepeare()
@@ -94,7 +64,9 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
  -[:PRODUCTION_OF]->(play)<-[:WROTE_PLAY]-(bard)
 RETURN DISTINCT play.title AS play
 ";
+
             host.Execute(querySource);
         }
+
     }
 }

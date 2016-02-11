@@ -45,7 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cypher\Applier.cs" />
+    <Compile Include="Cypher\ConnectionMatchDescription.cs" />
+    <Compile Include="Cypher\DepthRangeDescription.cs" />
     <Compile Include="Cypher\Match.cs" />
+    <Compile Include="Cypher\NodeMatchDescription.cs" />
+    <Compile Include="Cypher\PathMatchDescription.cs" />
+    <Compile Include="Cypher\RelationshipMatchDescription.cs" />
     <Compile Include="HasLabel.cs" />
     <Compile Include="HasProperties.cs" />
     <Compile Include="Relationship.cs" />

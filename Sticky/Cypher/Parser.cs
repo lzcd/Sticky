@@ -60,6 +60,7 @@ namespace Sticky.Cypher
                     PropertyDescriptions = properties.IsDefined ? properties.Get() : new List<PropertyDescription>()
                 };
 
+
             var relationshipParser =
                 from leftDirection in Parse.Char('<').Optional()
                 from leftLine in Parse.Char('-')
@@ -100,13 +101,86 @@ namespace Sticky.Cypher
                 from terminator in Parse.Char(';').Optional()
                 select (Applier)new Create { Paths = paths };
 
+            var optionalPrefixParser = Parse.Char('|');
+
+            var optionalIdentifer =
+                from optionalPrefix in optionalPrefixParser
+                from identifier in identifierParser
+                select identifier;
+
+            var labelMatchParser =
+              from label in labelParser
+              from optionalIdentifers in optionalIdentifer.Many()
+              select new List<string> { label } .Concat(optionalIdentifers);
+
+            var depthPrefixParser = Parse.Char('*');
+
+            var depthRangeMatchParser =
+                from asterix in Parse.Char('*')
+                from minimumDepth in Parse.Digit.XAtLeastOnce()
+                from range in Parse.Char('.').Repeat(2)
+                from maximumDepth in Parse.Digit.XAtLeastOnce()
+                select new DepthRangeDescription {
+                    Minimum = int.Parse( new string( minimumDepth.ToArray())),
+                    Maximum =  int.Parse( new string( maximumDepth.ToArray()))
+                };
+
+            var nodeMatchParser =
+                from startNodeChar in Parse.Char('(')
+                from identifier in identifierParser.Optional()
+                from label in labelParser.Optional()
+                from properties in propertiesParser.Optional()
+                from endNodeChar in Parse.Char(')')
+                select new NodeMatchDescription
+                {
+                    Identifier = identifier.IsDefined ? identifier.Get() : "",
+                    Label = label.IsDefined ? label.Get() : "",
+                    PropertyDescriptions = properties.IsDefined ? properties.Get() : new List<PropertyDescription>()
+                };
+
+            var relationshipMatchParser =
+               from leftDirection in Parse.Char('<').Optional()
+               from leftLine in Parse.Char('-')
+               from openBracket in Parse.Char('[')
+               from labels in labelMatchParser
+               from depthRange in depthRangeMatchParser.Optional()
+               from properties in propertiesParser.Optional()
+               from closeBracket in Parse.Char(']')
+               from rightLine in Parse.Char('-')
+               from rightDirection in Parse.Char('>').Optional()
+               select new RelationshipMatchDescription
+               {
+                   Labels = labels,
+                   PropertyDescriptions = properties.IsDefined ? properties.Get() : new List<PropertyDescription>(),
+                   Direction = leftDirection.IsDefined ?
+                       RelationshipDirection.Left :
+                       (rightDirection.IsDefined ? RelationshipDirection.Right : RelationshipDirection.Unknown)
+               };
+
+            var connectionMatchParser =
+                from relationship in relationshipMatchParser
+                from rightNode in nodeMatchParser
+                select new ConnectionMatchDescription {
+                    RelationshipDescription = relationship,
+                    NodeDescription = rightNode };
+
+            var pathMatchParser =
+                from leading in Parse.WhiteSpace.Many()
+                from leftNode in nodeMatchParser
+                from connection in connectionMatchParser.Optional()
+                select new PathMatchDescription
+                {
+                    NodeDescription = leftNode,
+                    ConnectionDescription = connection.IsDefined ? connection.Get() : null
+                };
+
+
             var matchCommandParser =
                from leading in Parse.WhiteSpace.Many()
                from text in Parse.String("MATCH")
-               from anchorNodes in nodeParser.Many()
-               from path in pathParser.DelimitedBy(Parse.Char(','))
+               from paths in pathMatchParser.DelimitedBy(Parse.Char(','))
                from terminator in Parse.Char(';').Optional()
-               select (Applier)new Match { AnchorNodes = anchorNodes, Path = path };
+               select (Applier)new Match { Paths = paths };
 
             var commandParser =
                 from command in createCommandParser
