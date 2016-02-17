@@ -12,16 +12,16 @@ namespace Sticky.Cypher
 
         public void Apply(List<Node> nodes)
         {
-            var anchorCriteria = Paths.Take(Paths.Count() - 1);
-            var path = Paths.Last();
+            var namedCriteria = Paths.Take(Paths.Count() - 1);
+            var nodeCriteriaByName = FindNamedNodeCriteria(nodes, namedCriteria);
 
-            var anchorMatchesByIdentifier = FindAnchorMatches(nodes, anchorCriteria);
+            var pathCriteria = Paths.Last();
 
         }
 
-        private static Dictionary<string, List<Node>> FindAnchorMatches(List<Node> nodes, IEnumerable<PathMatchDescription> anchorCriteria)
+        private static Dictionary<string, List<Node>> FindNamedNodeCriteria(List<Node> nodes, IEnumerable<PathMatchDescription> anchorCriteria)
         {
-            var anchorMatchesByIdentifier = new Dictionary<string, List<Node>>();
+            var nodeCriteriaByName = new Dictionary<string, List<Node>>();
             foreach (var anchorCriterion in anchorCriteria)
             {
                 foreach (var node in nodes)
@@ -71,17 +71,17 @@ namespace Sticky.Cypher
                     }
 
                     var identifier = anchorCriterion.NodeDescription.Identifier;
-                    var anchorMatches = default(List<Node>);
-                    if (!anchorMatchesByIdentifier.TryGetValue(identifier, out anchorMatches))
+                    var matches = default(List<Node>);
+                    if (!nodeCriteriaByName.TryGetValue(identifier, out matches))
                     {
-                        anchorMatches = new List<Node>();
-                        anchorMatchesByIdentifier.Add(identifier, anchorMatches);
+                        matches = new List<Node>();
+                        nodeCriteriaByName.Add(identifier, matches);
                     }
-                    anchorMatches.Add(node);
+                    matches.Add(node);
                 }
             }
 
-            return anchorMatchesByIdentifier;
+            return nodeCriteriaByName;
         }
     }
 }
