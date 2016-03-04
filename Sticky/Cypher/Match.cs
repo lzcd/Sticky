@@ -12,8 +12,8 @@ namespace Sticky.Cypher
 
         public void Apply(List<Node> nodes)
         {
-            var namedDescription = Paths.Take(Paths.Count() - 1);
-            var nodeDescriptionByName = namedDescription.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
+            var namedNodeDescriptions = Paths.Take(Paths.Count() - 1);
+            var nodeDescriptionByName = namedNodeDescriptions.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
 
             var pathCriteria = Paths.Last();
             var startNode = ToGraph(pathCriteria);
