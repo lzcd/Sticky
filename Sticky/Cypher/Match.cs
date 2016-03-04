@@ -13,75 +13,59 @@ namespace Sticky.Cypher
         public void Apply(List<Node> nodes)
         {
             var namedCriteria = Paths.Take(Paths.Count() - 1);
-            var nodeCriteriaByName = FindNamedNodeCriteria(nodes, namedCriteria);
+            var namedCriteriaByIdentifier = namedCriteria.ToDictionary(k => k.NodeDescription.Identifier, v => v);
 
             var pathCriteria = Paths.Last();
-
         }
 
-        private static Dictionary<string, List<Node>> FindNamedNodeCriteria(List<Node> nodes, IEnumerable<PathMatchDescription> anchorCriteria)
+      
+        private static bool DoesMatchDescription(Node node, NodeMatchDescription description)
         {
-            var nodeCriteriaByName = new Dictionary<string, List<Node>>();
-            foreach (var anchorCriterion in anchorCriteria)
+            if (node.Label != description.Label)
             {
-                foreach (var node in nodes)
-                {
-                    if (node.Label != anchorCriterion.NodeDescription.Label)
-                    {
-                        continue;
-                    }
-
-                    var unmatchedPropertyFound = false;
-                    foreach (var propertyPairCriterion in anchorCriterion.NodeDescription.PropertyDescriptions)
-                    {
-                        var name = propertyPairCriterion.Name;
-                      
-
-                        var testValue = default(HasValue);
-                        if (!node.PropertyByName.TryGetValue(name, out testValue))
-                        {
-                            continue;
-                        }
-
-
-                        var value = default(HasValue);
-
-                        if (propertyPairCriterion.TextValue.StartsWith("'") &&
-                            propertyPairCriterion.TextValue.EndsWith("'"))
-                        {
-                            var textValue = propertyPairCriterion.TextValue.Substring(1, propertyPairCriterion.TextValue.Length - 2);
-                            value = new Text { Value = textValue };
-                        }
-                        else
-                        {
-                            var numericValue = default(decimal);
-                            Decimal.TryParse(propertyPairCriterion.TextValue, out numericValue);
-                            value = new Number { Value = numericValue };
-                        }
-
-                        if (!testValue.Equals(value))
-                        {
-                            unmatchedPropertyFound = true;
-                            break;
-                        }
-                    }
-                    if (unmatchedPropertyFound)
-                    {
-                        continue;
-                    }
-
-                    var identifier = anchorCriterion.NodeDescription.Identifier;
-                    var matches = default(List<Node>);
-                    if (!nodeCriteriaByName.TryGetValue(identifier, out matches))
-                    {
-                        matches = new List<Node>();
-                        nodeCriteriaByName.Add(identifier, matches);
-                    }
-                    matches.Add(node);
-                }
+                return false;
             }
 
-            return nodeCriteriaByName;
+            var unmatchedPropertyFound = false;
+            foreach (var propertyDescription in description.PropertyDescriptions)
+            {
+                var name = propertyDescription.Name;
+
+
+                var testValue = default(HasValue);
+                if (!node.PropertyByName.TryGetValue(name, out testValue))
+                {
+                    return false;
+                }
+
+
+                var value = default(HasValue);
+
+                if (propertyDescription.TextValue.StartsWith("'") &&
+                    propertyDescription.TextValue.EndsWith("'"))
+                {
+                    var textValue = propertyDescription.TextValue.Substring(1, propertyDescription.TextValue.Length - 2);
+                    value = new Text { Value = textValue };
+                }
+                else
+                {
+                    var numericValue = default(decimal);
+                    Decimal.TryParse(propertyDescription.TextValue, out numericValue);
+                    value = new Number { Value = numericValue };
+                }
+
+                if (!testValue.Equals(value))
+                {
+                    unmatchedPropertyFound = true;
+                    break;
+                }
+            }
+            if (unmatchedPropertyFound)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
