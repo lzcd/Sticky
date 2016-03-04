@@ -12,6 +12,8 @@ namespace Sticky
         
         public Dictionary<string, HasValue> PropertyByName { get; } = new Dictionary<string, HasValue>();
 
-        public List<Relationship> Relationships { get; } = new List<Relationship>();
+        public List<Relationship> IncomingRelationships { get; } = new List<Relationship>();
+        public List<Relationship> OutgoingRelationships { get; } = new List<Relationship>();
+
     }
 }

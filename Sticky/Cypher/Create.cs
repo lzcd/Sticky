@@ -18,7 +18,8 @@ namespace Sticky.Cypher
             {
                 ToNode(path, nodeByIdentifier);
             }
-            existingNodes.AddRange(nodeByIdentifier.Values);
+            var nodes = nodeByIdentifier.Values;
+            existingNodes.AddRange(nodes);
         }
 
         private static Node ToNode(PathDescription path, Dictionary<string, Node> nodeByIdentifier)
@@ -42,19 +43,46 @@ namespace Sticky.Cypher
                 var otherNode = FindOrCreateNode(otherNodeDescription, nodeByIdentifier);
 
                 var relationshipDescription = path.ConnectionDescription.RelationshipDescription;
-                var relationship = new Relationship {
-                    Label = relationshipDescription.Label,
-                    Node = otherNode
-                };
 
-                foreach (var propertyDescription in relationshipDescription.PropertyDescriptions)
+                var incomingRelationship = CreateRelationship(relationshipDescription);
+                var outgoingRelationship = CreateRelationship(relationshipDescription);
+
+                switch (relationshipDescription.Direction)
                 {
-                    ApplyProperty(propertyDescription, relationship);
-                }
+                    case RelationshipDirection.Left:
+                        incomingRelationship.Node = otherNode;
+                        node.IncomingRelationships.Add(incomingRelationship);
 
-                node.Relationships.Add(relationship);
+                        outgoingRelationship.Node = node;
+                        otherNode.OutgoingRelationships.Add(outgoingRelationship);
+                        break;
+                    case RelationshipDirection.Right:
+                        outgoingRelationship.Node = otherNode;
+                        node.OutgoingRelationships.Add(outgoingRelationship);
+
+                        incomingRelationship.Node = node;
+                        otherNode.IncomingRelationships.Add(incomingRelationship);
+                        break;
+                    default:
+                        throw new Exception();
+                }
             }
             return node;
+        }
+
+        private static Relationship CreateRelationship(RelationshipDescription relationshipDescription)
+        {
+            var relationship = new Relationship
+            {
+                Label = relationshipDescription.Label
+            };
+
+            foreach (var propertyDescription in relationshipDescription.PropertyDescriptions)
+            {
+                ApplyProperty(propertyDescription, relationship);
+            }
+
+            return relationship;
         }
 
         private static void ApplyProperty(PropertyDescription propertyDescription, HasProperties container)

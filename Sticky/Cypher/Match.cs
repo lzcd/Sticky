@@ -12,13 +12,39 @@ namespace Sticky.Cypher
 
         public void Apply(List<Node> nodes)
         {
-            var namedCriteria = Paths.Take(Paths.Count() - 1);
-            var namedCriteriaByIdentifier = namedCriteria.ToDictionary(k => k.NodeDescription.Identifier, v => v);
+            var namedDescription = Paths.Take(Paths.Count() - 1);
+            var descriptionByName = namedDescription.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
 
             var pathCriteria = Paths.Last();
+            var nodeDescription = pathCriteria.NodeDescription;
+            if (!String.IsNullOrEmpty(nodeDescription.Identifier))
+            {
+                nodeDescription = descriptionByName[nodeDescription.Identifier];
+            }
+            var matchingNodes = new List<Node>();
+            foreach (var node in nodes)
+            {
+                if (!DoesMatchDescription(node, nodeDescription))
+                {
+                    continue;
+                }
+                matchingNodes.Add(node);
+            }
+            var connectionDescription = pathCriteria.ConnectionDescriptions.First();
+            var relationshipDescription = connectionDescription.RelationshipDescription;
+            switch (relationshipDescription.Direction)
+            {
+                case RelationshipDirection.Left:
+
+                    break;
+                case RelationshipDirection.Right:
+                    break;
+                default:
+                    throw new Exception();
+            }
         }
 
-      
+
         private static bool DoesMatchDescription(Node node, NodeMatchDescription description)
         {
             if (node.Label != description.Label)
