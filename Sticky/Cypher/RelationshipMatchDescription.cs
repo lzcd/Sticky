@@ -13,5 +13,6 @@ namespace Sticky.Cypher
         public IEnumerable<string> Labels { get; internal set; }
         public DepthRangeDescription DepthRange { get; internal set; }
         public IEnumerable<PropertyDescription> PropertyDescriptions { get; internal set; }
+        public NodeMatchDescription Node { get; internal set; }
     }
 }

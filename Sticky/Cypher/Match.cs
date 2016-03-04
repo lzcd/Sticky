@@ -13,13 +13,16 @@ namespace Sticky.Cypher
         public void Apply(List<Node> nodes)
         {
             var namedDescription = Paths.Take(Paths.Count() - 1);
-            var descriptionByName = namedDescription.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
+            var nodeDescriptionByName = namedDescription.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
 
             var pathCriteria = Paths.Last();
-            var nodeDescription = pathCriteria.NodeDescription;
+            var startNode = ToGraph(pathCriteria);
+            var currentNode = startNode;
+
+            var nodeDescription = currentNode;
             if (!String.IsNullOrEmpty(nodeDescription.Identifier))
             {
-                nodeDescription = descriptionByName[nodeDescription.Identifier];
+                nodeDescription = nodeDescriptionByName[nodeDescription.Identifier];
             }
             var matchingNodes = new List<Node>();
             foreach (var node in nodes)
@@ -30,9 +33,8 @@ namespace Sticky.Cypher
                 }
                 matchingNodes.Add(node);
             }
-            var connectionDescription = pathCriteria.ConnectionDescriptions.First();
-            var relationshipDescription = connectionDescription.RelationshipDescription;
-            var otherNodeDescription = connectionDescription.NodeDescription;
+
+            var relationshipDescription = currentNode.RelationshipDescriptions.First();
 
             foreach (var matchingNode in matchingNodes)
             {
@@ -49,6 +51,7 @@ namespace Sticky.Cypher
                         throw new Exception();
                 }
 
+
                 var matchingRelationships = new List<Relationship>();
                 foreach (var relationship in relationships)
                 {
@@ -63,13 +66,29 @@ namespace Sticky.Cypher
                 foreach (var relationship in matchingRelationships)
                 {
                     var otherNode = relationship.Node;
-                    if (!DoesMatchDescription(otherNode, otherNodeDescription))
+                    if (!DoesMatchDescription(otherNode, relationshipDescription.Node))
                     {
                         continue;
                     }
                     matchingOtherNodes.Add(otherNode);
                 }
             }
+        }
+
+        private static NodeMatchDescription ToGraph(PathMatchDescription pathCriteria)
+        {
+            var startNode = pathCriteria.NodeDescription;
+            var currentNode = startNode;
+
+            foreach (var connection in pathCriteria.ConnectionDescriptions)
+            {
+                var rd = connection.RelationshipDescription;
+                rd.Node = connection.NodeDescription;
+                currentNode.RelationshipDescriptions.Add(rd);
+                currentNode = rd.Node;
+            }
+
+            return startNode;
         }
 
         private static bool DoesMatchDescription(Relationship relationship, RelationshipMatchDescription description)
@@ -104,11 +123,11 @@ namespace Sticky.Cypher
                     return false;
                 }
             }
-  
+
             return true;
         }
 
-       
+
         private static bool DoesMatchDescription(Dictionary<string, HasValue> propertyByName, PropertyDescription propertyDescription)
         {
             var name = propertyDescription.Name;

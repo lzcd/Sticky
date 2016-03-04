@@ -9,8 +9,9 @@ namespace Sticky.Cypher
 {
     class NodeMatchDescription
     {
-        public string Identifier { get; internal set; }
-        public string Label { get; internal set; }
-        public IEnumerable<PropertyDescription> PropertyDescriptions { get; internal set; }
+        public string Identifier { get; set; }
+        public string Label { get; set; }
+        public IEnumerable<PropertyDescription> PropertyDescriptions { get; set; }
+        public List<RelationshipMatchDescription> RelationshipDescriptions { get; } = new List<RelationshipMatchDescription>();
     }
 }
