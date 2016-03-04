@@ -34,6 +34,7 @@ namespace Sticky.Cypher
                 matchingNodes.Add(node);
             }
 
+            // TODO: Deal with multiple relationship descriptions
             var relationshipDescription = currentNode.RelationshipDescriptions.First();
 
             foreach (var matchingNode in matchingNodes)
@@ -80,6 +81,7 @@ namespace Sticky.Cypher
             var startNode = pathCriteria.NodeDescription;
             var currentNode = startNode;
 
+            // TODO: deal with depth counts
             foreach (var connection in pathCriteria.ConnectionDescriptions)
             {
                 var rd = connection.RelationshipDescription;
