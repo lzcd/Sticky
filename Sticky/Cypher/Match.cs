@@ -32,6 +32,7 @@ namespace Sticky.Cypher
             }
             var connectionDescription = pathCriteria.ConnectionDescriptions.First();
             var relationshipDescription = connectionDescription.RelationshipDescription;
+            var otherNodeDescription = connectionDescription.NodeDescription;
 
             foreach (var matchingNode in matchingNodes)
             {
@@ -58,6 +59,16 @@ namespace Sticky.Cypher
                     matchingRelationships.Add(relationship);
                 }
 
+                var matchingOtherNodes = new List<Node>();
+                foreach (var relationship in matchingRelationships)
+                {
+                    var otherNode = relationship.Node;
+                    if (!DoesMatchDescription(otherNode, otherNodeDescription))
+                    {
+                        continue;
+                    }
+                    matchingOtherNodes.Add(otherNode);
+                }
             }
         }
 
