@@ -14,5 +14,17 @@ namespace Sticky.Cypher
         public DepthRangeDescription DepthRange { get; internal set; }
         public IEnumerable<PropertyDescription> PropertyDescriptions { get; internal set; }
         public NodeMatchDescription Node { get; internal set; }
+
+        public RelationshipMatchDescription Clone()
+        {
+            return new RelationshipMatchDescription()
+            {
+                Direction = this.Direction,
+                Labels = this.Labels,
+                DepthRange = this.DepthRange,
+                PropertyDescriptions = this.PropertyDescriptions,
+                Node = this.Node
+            };
+        }
     }
 }

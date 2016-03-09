@@ -82,12 +82,40 @@ namespace Sticky.Cypher
             var currentNode = startNode;
 
             // TODO: deal with depth counts
-            foreach (var connection in pathCriteria.ConnectionDescriptions)
+            foreach (var connectionDescription in pathCriteria.ConnectionDescriptions)
             {
-                var rd = connection.RelationshipDescription;
-                rd.Node = connection.NodeDescription;
-                currentNode.RelationshipDescriptions.Add(rd);
-                currentNode = rd.Node;
+                if (connectionDescription.RelationshipDescription.DepthRange == null)
+                {
+                    var relationshipDescription = connectionDescription.RelationshipDescription;
+                    relationshipDescription.Node = connectionDescription.NodeDescription;
+                    currentNode.RelationshipDescriptions.Add(relationshipDescription);
+                    currentNode = relationshipDescription.Node;
+                    continue;
+
+                }
+
+                var startingCurrentNode = currentNode;
+                var repeatedRelationshipDescription = connectionDescription.RelationshipDescription;
+                for (var depth = repeatedRelationshipDescription.DepthRange.Minimum;
+                    depth <= repeatedRelationshipDescription.DepthRange.Maximum;
+                    depth++)
+                {
+                    currentNode = startingCurrentNode;
+                    for (var currentDepth = 1;
+                        currentDepth < depth;
+                        currentDepth++)
+                    {
+                        var relationshipDescription = repeatedRelationshipDescription.Clone();
+                        relationshipDescription.Node = new NodeMatchDescription();
+                        currentNode.RelationshipDescriptions.Add(relationshipDescription);
+                        currentNode = relationshipDescription.Node;
+                    }
+
+                    var tailRelationshipDescription = repeatedRelationshipDescription.Clone();
+                    tailRelationshipDescription.Node = connectionDescription.NodeDescription;
+                    currentNode.RelationshipDescriptions.Add(tailRelationshipDescription);
+                    currentNode = tailRelationshipDescription.Node;
+                }
             }
 
             return startNode;
