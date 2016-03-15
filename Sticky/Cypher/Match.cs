@@ -18,16 +18,15 @@ namespace Sticky.Cypher
             var pathCriteria = Paths.Last();
             var firstNodeMatchDescription = ToGraph(pathCriteria);
 
-            var nodeDescription = firstNodeMatchDescription;
-            nodeDescription = ResolveIfNamed(nodeDescriptionByName, nodeDescription);
-            var matchingNodes = FindMatchingModes(nodes, nodeDescription);
+            var matchingNodes = FindMatchingModes(nodes,
+                                    ResolveIfNamed(nodeDescriptionByName, firstNodeMatchDescription));
 
-            var traceHeads = new Queue<TraceNode> (from node in matchingNodes
-                              select new TraceNode()
-                              {
-                                  Node = node,
-                                  NodeMatchDescription = nodeDescription
-                              });
+            var traceHeads = new Queue<TraceNode>(from node in matchingNodes
+                                                  select new TraceNode()
+                                                  {
+                                                      Node = node,
+                                                      NodeMatchDescription = firstNodeMatchDescription
+                                                  });
 
             while (traceHeads.Any())
             {
@@ -35,7 +34,8 @@ namespace Sticky.Cypher
                 foreach (var relationshipDescription in head.NodeMatchDescription.RelationshipDescriptions)
                 {
                     var relationships = default(List<Relationship>);
-                    switch (relationshipDescription.Direction) {
+                    switch (relationshipDescription.Direction)
+                    {
                         case RelationshipDirection.Left:
                             relationships = head.Node.IncomingRelationships;
                             break;
@@ -43,6 +43,8 @@ namespace Sticky.Cypher
                             relationships = head.Node.OutgoingRelationships;
                             break;
                     }
+
+                    var otherNodeDescription = ResolveIfNamed(nodeDescriptionByName, relationshipDescription.Node);
 
                     foreach (var relationship in relationships)
                     {
@@ -52,10 +54,11 @@ namespace Sticky.Cypher
                         }
 
                         var otherNode = relationship.Node;
-                        if (!DoesMatchDescription(otherNode, relationshipDescription.Node))
+                        if (!DoesMatchDescription(otherNode, otherNodeDescription))
                         {
                             continue;
                         }
+
 
                         var newHead = new TraceNode()
                         {
@@ -88,7 +91,7 @@ namespace Sticky.Cypher
         {
             if (!String.IsNullOrEmpty(nodeDescription.Identifier))
             {
-                nodeDescription = nodeDescriptionByName[nodeDescription.Identifier];
+                return nodeDescriptionByName[nodeDescription.Identifier];
             }
 
             return nodeDescription;
