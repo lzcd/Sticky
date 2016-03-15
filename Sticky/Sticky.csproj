@@ -51,6 +51,7 @@
     <Compile Include="Cypher\NodeMatchDescription.cs" />
     <Compile Include="Cypher\PathMatchDescription.cs" />
     <Compile Include="Cypher\RelationshipMatchDescription.cs" />
+    <Compile Include="Cypher\TraceNode.cs" />
     <Compile Include="HasLabel.cs" />
     <Compile Include="HasProperties.cs" />
     <Compile Include="Relationship.cs" />

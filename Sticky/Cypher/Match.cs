@@ -16,14 +16,17 @@ namespace Sticky.Cypher
             var nodeDescriptionByName = namedNodeDescriptions.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
 
             var pathCriteria = Paths.Last();
-            var startNode = ToGraph(pathCriteria);
-            var currentNode = startNode;
+            var firstNodeMatchDescription = ToGraph(pathCriteria);
 
-            var nodeDescription = currentNode;
-            if (!String.IsNullOrEmpty(nodeDescription.Identifier))
-            {
-                nodeDescription = nodeDescriptionByName[nodeDescription.Identifier];
-            }
+            var nodeDescription = firstNodeMatchDescription;
+            nodeDescription = ResolveIfNamed(nodeDescriptionByName, nodeDescription);
+            var matchingNodes = FindMatchingModes(nodes, nodeDescription);
+
+            var traceHeads = new List<TraceNode> { new TraceNode() { NodeMatchDescription = firstNodeMatchDescription } };
+        }
+
+        private static List<Node> FindMatchingModes(List<Node> nodes, NodeMatchDescription nodeDescription)
+        {
             var matchingNodes = new List<Node>();
             foreach (var node in nodes)
             {
@@ -33,47 +36,17 @@ namespace Sticky.Cypher
                 }
                 matchingNodes.Add(node);
             }
+            return matchingNodes;
+        }
 
-            // TODO: Deal with multiple relationship descriptions
-            var relationshipDescription = currentNode.RelationshipDescriptions.First();
-
-            foreach (var matchingNode in matchingNodes)
+        private static NodeMatchDescription ResolveIfNamed(Dictionary<string, NodeMatchDescription> nodeDescriptionByName, NodeMatchDescription nodeDescription)
+        {
+            if (!String.IsNullOrEmpty(nodeDescription.Identifier))
             {
-                var relationships = default(IEnumerable<Relationship>);
-                switch (relationshipDescription.Direction)
-                {
-                    case RelationshipDirection.Left:
-                        relationships = matchingNode.IncomingRelationships;
-                        break;
-                    case RelationshipDirection.Right:
-                        relationships = matchingNode.OutgoingRelationships;
-                        break;
-                    default:
-                        throw new Exception();
-                }
-
-
-                var matchingRelationships = new List<Relationship>();
-                foreach (var relationship in relationships)
-                {
-                    if (!DoesMatchDescription(relationship, relationshipDescription))
-                    {
-                        continue;
-                    }
-                    matchingRelationships.Add(relationship);
-                }
-
-                var matchingOtherNodes = new List<Node>();
-                foreach (var relationship in matchingRelationships)
-                {
-                    var otherNode = relationship.Node;
-                    if (!DoesMatchDescription(otherNode, relationshipDescription.Node))
-                    {
-                        continue;
-                    }
-                    matchingOtherNodes.Add(otherNode);
-                }
+                nodeDescription = nodeDescriptionByName[nodeDescription.Identifier];
             }
+
+            return nodeDescription;
         }
 
         private static NodeMatchDescription ToGraph(PathMatchDescription pathCriteria)
