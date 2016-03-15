@@ -22,7 +22,52 @@ namespace Sticky.Cypher
             nodeDescription = ResolveIfNamed(nodeDescriptionByName, nodeDescription);
             var matchingNodes = FindMatchingModes(nodes, nodeDescription);
 
-            var traceHeads = new List<TraceNode> { new TraceNode() { NodeMatchDescription = firstNodeMatchDescription } };
+            var traceHeads = new Queue<TraceNode> (from node in matchingNodes
+                              select new TraceNode()
+                              {
+                                  Node = node,
+                                  NodeMatchDescription = nodeDescription
+                              });
+
+            while (traceHeads.Any())
+            {
+                var head = traceHeads.Dequeue();
+                foreach (var relationshipDescription in head.NodeMatchDescription.RelationshipDescriptions)
+                {
+                    var relationships = default(List<Relationship>);
+                    switch (relationshipDescription.Direction) {
+                        case RelationshipDirection.Left:
+                            relationships = head.Node.IncomingRelationships;
+                            break;
+                        case RelationshipDirection.Right:
+                            relationships = head.Node.OutgoingRelationships;
+                            break;
+                    }
+
+                    foreach (var relationship in relationships)
+                    {
+                        if (!DoesMatchDescription(relationship, relationshipDescription))
+                        {
+                            continue;
+                        }
+
+                        var otherNode = relationship.Node;
+                        if (!DoesMatchDescription(otherNode, relationshipDescription.Node))
+                        {
+                            continue;
+                        }
+
+                        var newHead = new TraceNode()
+                        {
+                            Node = otherNode,
+                            NodeMatchDescription = relationshipDescription.Node,
+                            PreviousRelationship = relationship,
+                            PreviousTraceNode = head
+                        };
+                        traceHeads.Enqueue(newHead);
+                    }
+                }
+            }
         }
 
         private static List<Node> FindMatchingModes(List<Node> nodes, NodeMatchDescription nodeDescription)
