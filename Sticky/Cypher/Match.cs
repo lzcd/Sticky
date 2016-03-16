@@ -24,11 +24,18 @@ namespace Sticky.Cypher
 
             var matchingTraceHeads = TraceMatches(firstNodeMatchDescription, matchingNodes, nodeDescriptionByName);
 
-
+            var results = new ResultTable();
+            var rowIndex = 0;
             foreach (var matchingTraceHead in matchingTraceHeads)
             {
                 foreach (var projection in ReturnDescription.Projections)
                 {
+                    var columnName = projection.PropertyName;
+                    if (!string.IsNullOrEmpty(projection.Alias))
+                    {
+                        columnName = projection.Alias;
+                    }
+
                     var traceNode = matchingTraceHead;
                     do
                     {
@@ -36,10 +43,12 @@ namespace Sticky.Cypher
                             traceNode.Node.PropertyByName.ContainsKey(projection.PropertyName))
                         {
                             var propertyValue = traceNode.Node.PropertyByName[projection.PropertyName];
+                            results[rowIndex, columnName] = propertyValue.ToString();
                         }
                         traceNode = traceNode.PreviousTraceNode;
                     } while (traceNode != null);
                 }
+                rowIndex++;
             }
         }
 

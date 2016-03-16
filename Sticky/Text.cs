@@ -25,5 +25,10 @@ namespace Sticky
 
             return other.Value == Value;
         }
+
+        public override string ToString()
+        {
+            return Value;
+        }
     }
 }
