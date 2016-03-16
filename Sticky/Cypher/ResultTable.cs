@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sticky.Cypher
 {
-    class ResultTable
+    public class ResultTable
     {
         public Dictionary<string, int> ColumnOrdinalByName { get; } = new Dictionary<string, int>();
 

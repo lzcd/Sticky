@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sticky.Cypher
 {
-    interface Applier
+    class ApplierResult
     {
-        ApplierResult Apply(List<Node> nodes);
+        public bool Succeeded { get; set; }
+        public ResultTable Result { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Tests
     [TestClass]
     public class ParserTests
     {
-        
+
 
         [TestMethod]
         public void CanParseShakepeare()
@@ -63,7 +63,9 @@ CREATE (shakespeare:Author {firstname:'William', lastname:'Shakespeare'}),
 RETURN DISTINCT play.title AS play
 ";
 
-            host.Execute(querySource);
+            var result = host.Execute(querySource);
+            Assert.AreEqual("Julius Caesar", result[0, "play"]);
+            Assert.AreEqual("The Tempest", result[1, "play"]);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿
+using Sticky.Cypher;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,12 @@ namespace Sticky
     {
         private List<Node> nodes = new List<Node>();
 
-        public void Execute(string source)
+        public ResultTable Execute(string source)
         {
             var parser = new Cypher.Parser();
             var command = parser.ToAst(source);
-            command.Apply(nodes);
+            var applierResult = command.Apply(nodes);
+            return applierResult.Result;
         }
     }
 }

@@ -10,16 +10,18 @@ namespace Sticky.Cypher
     {
         public IEnumerable<PathDescription> Paths;
 
-        public void Apply(List<Node> existingNodes)
+        public ApplierResult Apply(List<Node> existingNodes)
         {
             var nodeByIdentifier = new Dictionary<string, Node>();
 
-            foreach(var path in Paths)
+            foreach (var path in Paths)
             {
                 ToNode(path, nodeByIdentifier);
             }
             var nodes = nodeByIdentifier.Values;
             existingNodes.AddRange(nodes);
+
+            return new ApplierResult { Succeeded = true };
         }
 
         private static Node ToNode(PathDescription path, Dictionary<string, Node> nodeByIdentifier)

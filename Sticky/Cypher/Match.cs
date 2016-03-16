@@ -11,7 +11,7 @@ namespace Sticky.Cypher
         public IEnumerable<PathMatchDescription> Paths { get; set; }
         public ReturnDescription ReturnDescription { get; set; }
 
-        public void Apply(List<Node> nodes)
+        public ApplierResult Apply(List<Node> nodes)
         {
             var namedNodeDescriptions = Paths.Take(Paths.Count() - 1);
             var nodeDescriptionByName = namedNodeDescriptions.ToDictionary(k => k.NodeDescription.Identifier, v => v.NodeDescription);
@@ -24,7 +24,9 @@ namespace Sticky.Cypher
 
             var matchingTraceHeads = TraceMatches(firstNodeMatchDescription, matchingNodes, nodeDescriptionByName);
 
-            var results = ProjectToTable(matchingTraceHeads, ReturnDescription);
+            var result = ProjectToTable(matchingTraceHeads, ReturnDescription);
+
+            return new ApplierResult { Succeeded = true, Result = result };
         }
 
         private static ResultTable ProjectToTable(List<TraceNode> matchingTraceHeads, ReturnDescription returnDescription)
