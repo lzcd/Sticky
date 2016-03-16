@@ -24,7 +24,23 @@ namespace Sticky.Cypher
 
             var matchingTraceHeads = TraceMatches(firstNodeMatchDescription, matchingNodes, nodeDescriptionByName);
 
-           
+
+            foreach (var matchingTraceHead in matchingTraceHeads)
+            {
+                foreach (var projection in ReturnDescription.Projections)
+                {
+                    var traceNode = matchingTraceHead;
+                    do
+                    {
+                        if (traceNode.NodeMatchDescription.Identifier == projection.NodeName &&
+                            traceNode.Node.PropertyByName.ContainsKey(projection.PropertyName))
+                        {
+                            var propertyValue = traceNode.Node.PropertyByName[projection.PropertyName];
+                        }
+                        traceNode = traceNode.PreviousTraceNode;
+                    } while (traceNode != null);
+                }
+            }
         }
 
         private static List<TraceNode> TraceMatches(NodeMatchDescription startingDescription, List<Node> startingNodes, Dictionary<string, NodeMatchDescription> nodeDescriptionByName)
