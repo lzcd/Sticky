@@ -162,16 +162,19 @@ namespace Sticky.Cypher
 
         private static bool DoesMatchDescription(Node node, NodeMatchDescription description)
         {
-            if (node.Label != description.Label)
+            if (!string.IsNullOrEmpty(description.Label) && node.Label != description.Label)
             {
                 return false;
             }
 
-            foreach (var propertyDescription in description.PropertyDescriptions)
+            if (description.PropertyDescriptions != null)
             {
-                if (!DoesMatchDescription(node.PropertyByName, propertyDescription))
+                foreach (var propertyDescription in description.PropertyDescriptions)
                 {
-                    return false;
+                    if (!DoesMatchDescription(node.PropertyByName, propertyDescription))
+                    {
+                        return false;
+                    }
                 }
             }
 
