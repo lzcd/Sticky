@@ -184,7 +184,7 @@ namespace Sticky.Cypher
                 from asKeyword in Parse.String("AS").Optional()
                 from postAsKeywordSpacing in Parse.WhiteSpace.Many()
                 from alias in identifierParser
-                select new ReturnProjectionDescription();
+                select new ReturnProjectionDescription { NodeName = nodeIdentifier, PropertyName = propertyIdentifier, Alias = alias };
 
             var returnParser =
                 from leading in Parse.WhiteSpace.Many()
@@ -192,8 +192,8 @@ namespace Sticky.Cypher
                 from postReturnSpacing in Parse.WhiteSpace.Many()
                 from distinctKeyword in Parse.String("DISTINCT").Optional()
                 from postDistinctSpacing in Parse.WhiteSpace.Many()
-                from projection in returnProjectionParser.Many()
-                select new ReturnDescription();
+                from projections in returnProjectionParser.Many()
+                select new ReturnDescription { Distinct = distinctKeyword.IsDefined, Projections = projections };
 
             var matchCommandParser =
                from leading in Parse.WhiteSpace.Many()
