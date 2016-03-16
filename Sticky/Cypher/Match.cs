@@ -27,6 +27,7 @@ namespace Sticky.Cypher
                                                       Node = node,
                                                       NodeMatchDescription = firstNodeMatchDescription
                                                   });
+            var completedTraceHeads = new List<TraceNode>();
 
             while (traceHeads.Any())
             {
@@ -67,7 +68,15 @@ namespace Sticky.Cypher
                             PreviousRelationship = relationship,
                             PreviousTraceNode = head
                         };
-                        traceHeads.Enqueue(newHead);
+
+                        if (relationshipDescription.Node.RelationshipDescriptions.Any())
+                        {
+                            traceHeads.Enqueue(newHead);
+                        }
+                        else
+                        {
+                            completedTraceHeads.Add(newHead);
+                        }
                     }
                 }
             }
