@@ -21,11 +21,18 @@ namespace Sticky.Cypher
             var matchingNodes = FindMatchingModes(nodes,
                                     ResolveIfNamed(nodeDescriptionByName, firstNodeMatchDescription));
 
-            var traceHeads = new Queue<TraceNode>(from node in matchingNodes
+            var matchingTraceHeads = TraceMatches(firstNodeMatchDescription, matchingNodes, nodeDescriptionByName);
+
+           
+        }
+
+        private static List<TraceNode> TraceMatches(NodeMatchDescription startingDescription, List<Node> startingNodes, Dictionary<string, NodeMatchDescription> nodeDescriptionByName)
+        {
+            var traceHeads = new Queue<TraceNode>(from node in startingNodes
                                                   select new TraceNode()
                                                   {
                                                       Node = node,
-                                                      NodeMatchDescription = firstNodeMatchDescription
+                                                      NodeMatchDescription = startingDescription
                                                   });
             var completedTraceHeads = new List<TraceNode>();
 
@@ -80,6 +87,8 @@ namespace Sticky.Cypher
                     }
                 }
             }
+
+            return completedTraceHeads;
         }
 
         private static List<Node> FindMatchingModes(List<Node> nodes, NodeMatchDescription nodeDescription)
