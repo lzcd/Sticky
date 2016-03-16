@@ -91,7 +91,11 @@ namespace Sticky.Cypher
         {
             if (!String.IsNullOrEmpty(nodeDescription.Identifier))
             {
-                return nodeDescriptionByName[nodeDescription.Identifier];
+                var namedNodeDescription = default(NodeMatchDescription);
+                if (nodeDescriptionByName.TryGetValue(nodeDescription.Identifier, out namedNodeDescription))
+                {
+                    return namedNodeDescription;
+                }
             }
 
             return nodeDescription;
