@@ -30,9 +30,9 @@ namespace Sticky.Cypher
         private static ResultTable ProjectToTable(List<TraceNode> matchingTraceHeads, ReturnDescription returnDescription)
         {
             var results = new ResultTable();
-            var rowIndex = 0;
             foreach (var matchingTraceHead in matchingTraceHeads)
             {
+                var rowIndex = results.AddRow();
                 foreach (var projection in returnDescription.Projections)
                 {
                     var columnName = projection.PropertyName;
@@ -53,7 +53,6 @@ namespace Sticky.Cypher
                         traceNode = traceNode.PreviousTraceNode;
                     } while (traceNode != null);
                 }
-                rowIndex++;
             }
 
             return results;

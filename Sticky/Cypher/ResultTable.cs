@@ -12,6 +12,14 @@ namespace Sticky.Cypher
 
         private Dictionary<int, Dictionary<int, string>> dataByColumnOrdinalByRowIndex = new Dictionary<int, Dictionary<int, string>>();
 
+        public int RowCount { get; private set; }
+
+        public int AddRow()
+        {
+            RowCount++;
+            return RowCount - 1;
+        }
+
         public string this[int rowIndex, string columnName]
         {
             get
