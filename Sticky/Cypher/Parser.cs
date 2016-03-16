@@ -175,13 +175,22 @@ namespace Sticky.Cypher
                     ConnectionDescriptions = connections
                 };
 
+            var returnParser =
+                from leading in Parse.WhiteSpace.Many()
+                from returnKeyword in Parse.String("RETURN")
+                from postReturnSpacing in Parse.WhiteSpace.Many()
+                from distinctKeyword in Parse.String("DISTINCT").Optional()
+                from postDistinctSpacing in Parse.WhiteSpace.Many()
+
+                select new ReturnDescription();
 
             var matchCommandParser =
                from leading in Parse.WhiteSpace.Many()
-               from text in Parse.String("MATCH")
+               from matchKeyword in Parse.String("MATCH")
                from paths in pathMatchParser.DelimitedBy(Parse.Char(','))
+               from returnDescription in returnParser
                from terminator in Parse.Char(';').Optional()
-               select (Applier)new Match { Paths = paths };
+               select (Applier)new Match { Paths = paths, ReturnDescription = returnDescription };
 
             var commandParser =
                 from command in createCommandParser

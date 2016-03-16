@@ -9,6 +9,7 @@ namespace Sticky.Cypher
     class Match : Applier
     {
         public IEnumerable<PathMatchDescription> Paths { get; set; }
+        public ReturnDescription ReturnDescription { get; set; }
 
         public void Apply(List<Node> nodes)
         {
@@ -124,7 +125,6 @@ namespace Sticky.Cypher
             var startNode = pathCriteria.NodeDescription;
             var currentNode = startNode;
 
-            // TODO: deal with depth counts
             foreach (var connectionDescription in pathCriteria.ConnectionDescriptions)
             {
                 if (connectionDescription.RelationshipDescription.DepthRange == null)
